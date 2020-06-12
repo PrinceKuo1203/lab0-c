@@ -95,4 +95,9 @@ void q_reverse(queue_t *q);
  */
 void q_sort(queue_t *q);
 
+/*
+ * Declare dummy funxtion for commit test
+ */
+void Dummy_funxtion(void);
+
 #endif /* LAB0_QUEUE_H */
