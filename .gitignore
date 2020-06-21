@@ -6,3 +6,4 @@ qtest
 .devcontainer
 core*
 tags
+*.swp
