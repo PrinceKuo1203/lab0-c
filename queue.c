@@ -67,9 +67,12 @@ bool q_insert_head(queue_t *q, char *s)
 
     list_ele_t *newh;
     char *str;
+
+    int str_len = strlen(s);
+
     /* TODO: What should you do if the q is NULL? */
     newh = malloc(sizeof(list_ele_t));
-    str = malloc(strlen(s) + 1);  // allocate space for sting
+    str = malloc(str_len + 1);  // allocate space for sting
 
     if (!newh || !str) {
         if (newh)
@@ -89,7 +92,6 @@ bool q_insert_head(queue_t *q, char *s)
     q->head = newh;
 
     // copy string and save point address to object
-    int str_len = strlen(s);
     strncpy(str, s, str_len);
     *(str + str_len) = 0;
     newh->value = str;
@@ -117,9 +119,12 @@ bool q_insert_tail(queue_t *q, char *s)
 
     list_ele_t *newh;
     char *str;
+
+    int str_len = strlen(s);
+
     /* TODO: What should you do if the q is NULL? */
     newh = malloc(sizeof(list_ele_t));
-    str = malloc(sizeof(char) * strlen(s));  // allocate space for sting
+    str = malloc(str_len + 1);  // allocate space for sting
 
     if (!newh || !str) {
         if (newh)
@@ -135,11 +140,16 @@ bool q_insert_tail(queue_t *q, char *s)
     if (!q->tail && !q->head)
         q->head = newh;
 
-    newh->next = q->tail;
+    if (q->tail)
+        q->tail->next = newh;
+
     q->tail = newh;
+    q->tail->next = NULL;  // need update tail, otherwise default value
+                           // "0x555555555555" will deference undefine object
 
     // copy string and save point address to object
-    strncpy(str, s, strlen(s));
+    strncpy(str, s, str_len);
+    *(str + str_len) = 0;
     newh->value = str;
 
     // update queu count
@@ -160,7 +170,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
     /* TODO: You need to fix up this code. */
     /* TODO: Remove the above comment when you are about to implement. */
-    if (!q)
+    if (!q || !q->size)
         return false;
 
     // save q->head
@@ -169,6 +179,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     // assign new head
     q->head = q->head->next;
 
+    // copy value of remove object to target point.
     bufsize = strlen(temp->value);
     strncpy(sp, temp->value, bufsize);
     *(sp + bufsize) = 0;
@@ -205,6 +216,34 @@ void q_reverse(queue_t *q)
 {
     /* TODO: You need to write the code for this function */
     /* TODO: Remove the above comment when you are about to implement. */
+    if (!q || !q->size)
+        return;
+
+    // reserve
+    list_ele_t *prev, *now, *next;
+
+    // reserve elements
+    // initial
+    prev = NULL;       // next target of now object
+    now = q->head;     // update now object
+    next = now->next;  // update save next object
+
+    for (; next;) {
+        // redirection next point of object
+        now->next = prev;
+
+        prev = now;        // update next target of now object
+        now = next;        // update now object
+        next = now->next;  // update save next object
+    }
+
+    now->next = prev;
+    // reverse elements done
+
+    // reverse head and tail
+    list_ele_t *temp = q->head;
+    q->head = q->tail;
+    q->tail = temp;
 }
 
 /*
