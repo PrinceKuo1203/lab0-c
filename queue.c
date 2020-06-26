@@ -255,4 +255,180 @@ void q_sort(queue_t *q)
 {
     /* TODO: You need to write the code for this function */
     /* TODO: Remove the above comment when you are about to implement. */
+#if 0  // debug use
+    list_ele_t *temp = q->head;
+    printf("\nqueue list as below:\n");
+    printf("queue->head = %c_%s\n", *q->head->value, q->head->value);
+    for (; temp; temp = temp->next) {
+        printf("%p = %c_%s\n", temp, *temp->value, temp->value);
+    }
+#endif
+
+    // separate list to half
+    list_ele_t *half, *end;  // end = half->next to end
+    for (half = end = q->head; end; end = end->next) {
+#if 0  // debug use
+        printf("half => %c_%s\n", *half->value, half->value);
+        printf("end  => %c_%s\n", *end->value, end->value);
+        printf("end->next  => %p\n", end->next);
+#endif
+        if (end->next) {
+            end = end->next;
+            if (!end->next)
+                break;
+            else
+                half = half->next;
+        } else
+            break;
+    }
+#if 0  // debug use
+    printf("half => %c_%s\n", *half->value, half->value);
+    printf("end  => %c_%s\n", *end->value, end->value);
+#endif
+
+    if (end != q->head) {
+        // create a queue_t to store another half queue
+        queue_t half_q_obj, *half_q;  // point need deference real object
+        half_q = &half_q_obj;
+
+        // update half queue haed and tail
+        q->tail = half;
+
+        half_q->head = half->next;
+        half_q->tail = end;
+
+        half->next = NULL;  // 1st half queue finish
+#if 0                       // debug use
+        if (q) {
+            printf("@1st half\n");
+            temp = q->head;
+            for (; temp; temp = temp->next) {
+                printf("%p = %c_%s\n", temp, *temp->value, temp->value);
+            }
+        }
+
+        if (half_q) {
+            printf("@2nd half\n");
+            temp = half_q->head;
+            for (; temp; temp = temp->next) {
+                printf("%p = %c_%s\n", temp, *temp->value, temp->value);
+            }
+        } else {
+            printf("@2nd half is NULL\n");
+        }
+#endif
+        q_sort(q);
+        q_sort(half_q);
+
+
+        // merge
+        if (end == q->head)  // just one element, next element is NULL
+            return;
+        else {
+            list_ele_t *temp_q = q->head, *temp_half_q = half_q->head,
+                       *temp_head = NULL;
+
+            while (temp_q && temp_half_q) {
+                // printf("~~~ q->value = %x, half_q->value = %x\n",
+                // *temp_q->value, *temp_half_q->value);
+                if (*temp_q->value < *temp_half_q->value) {
+                    if (!temp_head) {
+                        q->head = temp_head = temp_q;
+#if 0  // debug use
+                        list_ele_t *temp = q->head;
+                        printf("\n--queue merge_AAAAA as below:\n");
+                        printf("--queue->head = %c_%s\n", *q->head->value,
+                               q->head->value);
+                        for (; temp; temp = temp->next) {
+                            printf("--%p = %c_%s\n", temp, *temp->value,
+                                   temp->value);
+                        }
+
+#endif
+
+                    } else {
+                        temp_head->next = temp_q;
+                        temp_head = temp_head->next;
+#if 0  // debug use
+                        list_ele_t *temp = q->head;
+                        printf("\n--queue merge_BBBBB as below:\n");
+                        printf("--queue->head = %c_%s\n", *q->head->value,
+                               q->head->value);
+                        for (; temp; temp = temp->next) {
+                            printf("--%p = %c_%s\n", temp, *temp->value,
+                                   temp->value);
+                        }
+#endif
+                    }
+                    // compare next elements
+                    if (temp_q->next)
+                        temp_q = temp_q->next;
+                    else {
+                        temp_head->next = temp_half_q;
+                        q->tail = half_q->tail;
+#if 0  // debug use
+                        list_ele_t *temp = q->head;
+                        printf("\n--queue merge_CCCCC as below:\n");
+                        printf("--queue->head = %c_%s\n", *q->head->value,
+                               q->head->value);
+                        for (; temp; temp = temp->next) {
+                            printf("--%p = %c_%s\n", temp, *temp->value,
+                                   temp->value);
+                        }
+#endif
+                        break;
+                    }
+
+                } else {
+                    if (!temp_head) {
+                        q->head = temp_head = temp_half_q;
+#if 0  // debug use
+                        list_ele_t *temp = q->head;
+                        printf("\n--queue merge_11111 as below:\n");
+                        printf("--queue->head = %c_%s\n", *q->head->value,
+                               q->head->value);
+                        for (; temp; temp = temp->next) {
+                            printf("--%p = %c_%s\n", temp, *temp->value,
+                                   temp->value);
+                        }
+#endif
+
+                    } else {
+                        temp_head->next = temp_half_q;
+                        temp_head = temp_head->next;
+#if 0  // debug use
+                        list_ele_t *temp = q->head;
+                        printf("\n--queue merge_22222 as below:\n");
+                        printf("--queue->head = %c_%s\n", *q->head->value,
+                               q->head->value);
+                        for (; temp; temp = temp->next) {
+                            printf("--%p = %c_%s\n", temp, *temp->value,
+                                   temp->value);
+                        }
+#endif
+                    }
+                    // compare next elements
+                    if (temp_half_q->next)
+                        temp_half_q = temp_half_q->next;
+                    else {
+                        temp_head->next = temp_q;
+                        half_q->tail = q->tail;
+#if 0  // debug use
+                        list_ele_t *temp = q->head;
+                        printf("\n--queue merge_33333 as below:\n");
+                        printf("--queue->head = %c_%s\n", *q->head->value,
+                               q->head->value);
+                        for (; temp; temp = temp->next) {
+                            printf("--%p = %c_%s\n", temp, *temp->value,
+                                   temp->value);
+                        }
+#endif
+                        break;
+                    }
+                }
+            }
+        }
+    } else {
+        // printf("next object is NULL!!!\n");
+    }
 }
