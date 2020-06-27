@@ -179,13 +179,16 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     // assign new head
     q->head = q->head->next;
 
-    // copy value of remove object to target point.
-    size_t temp_size = strlen(temp->value);
-    if (bufsize < temp_size)
-        temp_size = bufsize - 1;
+    if (bufsize) {
+        // copy value of remove object to target point.
+        size_t temp_size = strlen(temp->value);
+        if (bufsize < temp_size)
+            temp_size = bufsize - 1;
 
-    strncpy(sp, temp->value, temp_size);
-    *(sp + temp_size) = 0;
+        strncpy(sp, temp->value, temp_size);
+        *(sp + temp_size) = 0;
+    }
+
     // free old head mempry
     free(temp->value);
     free(temp);
