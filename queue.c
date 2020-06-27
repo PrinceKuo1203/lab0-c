@@ -204,6 +204,9 @@ int q_size(queue_t *q)
     /* TODO: You need to write the code for this function */
     /* Remember: It should operate in O(1) time */
     /* TODO: Remove the above comment when you are about to implement. */
+    if (!q || !q->head)
+        return 0;
+
     return q->size;  // test
 }
 
@@ -265,6 +268,10 @@ void q_sort(queue_t *q)
         printf("%p = %c_%s\n", temp, *temp->value, temp->value);
     }
 #endif
+
+    if (!q || !q->size || q->size == 1)
+        return;
+
 
     // separate list to half
     list_ele_t *half, *end;  // end = half->next to end
