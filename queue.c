@@ -33,21 +33,12 @@ void q_free(queue_t *q)
     }
 
     /* TODO: How about freeing the list elements and the strings? */
-    list_ele_t *temp = NULL, *temp_prev = NULL;
-    while (q->head->next) {
-        temp = q->head;
-        // free from tail
-        while (temp->next) {
-            temp_prev = temp;
-            temp = temp->next;
-        }
-        free(temp->value);
-        free(temp);
-        temp_prev->next = NULL;
+    list_ele_t *now = NULL, *temp = NULL;
+    for (now = q->head; now; now = temp) {
+        temp = now->next;  // save next object before free
+        free(now->value);
+        free(now);
     }
-
-    free(q->head->value);
-    free(q->head);
 
     /* Free queue structure */
     free(q);
