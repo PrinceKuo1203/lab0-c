@@ -332,9 +332,15 @@ void q_sort(queue_t *q)
                        *temp_head = NULL;
 
             while (temp_q && temp_half_q) {
-                // printf("~~~ q->value = %x, half_q->value = %x\n",
-                // *temp_q->value, *temp_half_q->value);
-                if (*temp_q->value < *temp_half_q->value) {
+#if 0
+                printf("~~~ q->value = %x, half_q->value = %x\n",
+                       *temp_q->value, *temp_half_q->value);
+                printf("%p = %c_%s\n", temp_q, *temp_q->value, temp_q->value);
+                printf("%p = %c_%s\n", temp_half_q, *temp_half_q->value,
+                       temp_half_q->value);
+                printf("%d", strcmp(temp_q->value, temp_half_q->value));
+#endif
+                if (strcmp(temp_q->value, temp_half_q->value) <= 0) {
                     if (!temp_head) {
                         q->head = temp_head = temp_q;
 #if 0  // debug use
